@@ -35,25 +35,20 @@ export const createPost = async (req, res) => {
     try {
         const { title, content, category, tags, subArticles } = req.body;
 
-        // Convert `tags` and `subArticles` from JSON strings to arrays
         const parsedTags = JSON.parse(tags || "[]");
         const parsedSubArticles = JSON.parse(subArticles || "[]");
 
-        // Get uploaded image filename (if available)
-        const image = req.file ? req.file.filename : null;
+        const image = req.savedImageName ? req.savedImageName : null;
 
-        // Create post document
         const post = new Post({ title, content, category, tags: parsedTags, image });
         await post.save();
 
-        // Process sub-articles
         const subArticlesArray = parsedSubArticles.map((sub) => ({
             ...sub,
             postId: post._id,
         }));
         const createdSubArticles = await SubArticle.insertMany(subArticlesArray);
 
-        // Link sub-articles to post
         post.subArticles = createdSubArticles.map((sub) => sub._id);
         await post.save();
 
