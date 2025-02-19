@@ -5,7 +5,7 @@ dotenv.config();
 import cors from 'cors'
 import { connectDB } from './db.js';
 connectDB();
-import { login, createPost, getPosts, authMiddleware, getPostById } from './blog.controller.js';
+import { login, createPost, getPosts, authMiddleware, getPostById, deletePost } from './blog.controller.js';
 import { upload } from "./multerConfig.js"; 
 
 app.use(cors());
@@ -14,11 +14,12 @@ app.use(express.json());
 app.use("/images", express.static("images"));
 
 app.post('/login', login);
-app.post('/createPost', [authMiddleware, upload.single("img")], createPost);
+app.post('/createPost', [upload.single("img")], createPost);
 app.get('/getPosts', getPosts);
 app.get('/getPosts/:_id', getPostById);
+app.delete('/deletePost/:_id', deletePost);
 
-
+ 
 
 // app.post('/login', async (req, res) => {
 //   // console.log(req);

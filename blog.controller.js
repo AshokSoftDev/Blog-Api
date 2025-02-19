@@ -72,13 +72,28 @@ export const getPosts = async (req, res) => {
 export const getPostById = async (req, res) => {
     try {
         const { _id } = req.params; // Get ObjectId from request parameters
-        const post = await Post.findById(_id).populate("subArticles");
+        const post = await Post.findById({_id}).populate("subArticles");
 
         if (!post) {
             return res.status(404).json({ error: "Post not found" });
         }
 
         return res.json(post);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+export const deletePost = async (req, res) => {
+    try {
+        const { _id } = req.params;
+        const post = await Post.deleteOne({_id});
+
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+
+        return res.json({message: 'Post deleted successfully'});
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
